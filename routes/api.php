@@ -9,5 +9,11 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::apiResource('users', UsersController::class);
+// Endpoints para usuarios
+Route::get('/users', [UsersController::class, 'index']); // Listar todos
+Route::get('/users/{id}', [UsersController::class, 'show']); // Mostrar uno
+Route::post('/users/login', [UsersController::class, 'login']); // Autenticar
+Route::post('/users/logout', [UsersController::class, 'logout'])->middleware('auth:sanctum');
+
+// Resource para tareas
 Route::apiResource('tasks', TasksController::class);
