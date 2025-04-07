@@ -38,6 +38,7 @@
                     </td>
                     <td>{{ $task->category }}</td>
                     <td>
+                        <a href="{{ route('updateTask', ['id' => $task->id]) }}">Edit</a>                        
                         <form action="" method="POST">
                             @csrf
                             @method('DELETE')

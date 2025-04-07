@@ -27,7 +27,13 @@ Route::get('/create-task', function () {
     return view('newTask');
 })->name('newTask')->middleware('auth');
 
+Route::get('/update-task', function () {
+    return view('updateTask');
+})->name('updateTask')->middleware('auth');
+
+
 //POST
 Route::post('/create-task', [TasksController::class, 'store'])->name('newTask.post')->middleware('auth');
+
 
 
