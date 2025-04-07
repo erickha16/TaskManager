@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tasks;
 use Illuminate\Http\Request;
 
 class TasksController extends Controller
@@ -9,9 +10,10 @@ class TasksController extends Controller
     /**
      * Display a listing of the resource. 
      */
-    public function index()
+    public function index() 
     {
-        //
+        $tasks = Tasks::all();
+        return view('welcome', ['tasks' => $tasks]);
     }
 
     /**
@@ -19,15 +21,42 @@ class TasksController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $validator = \Validator::make($request->all(), [
+            'title' => 'required|string|max:60',
+            'description' => 'required|string|max:1000',
+            'state' => 'required|string|max:15',
+            'expiration_at' => 'date',
+            'priority' => 'required|boolean',
+            'category' => 'required|string|max:15',
+        ]);
+        // Validate the request data
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $task = new Tasks();
+        $task->title = $request->input('title');
+        $task->description = $request->input('description');
+        $task->state = $request->input('state');
+        $task->expiration_at = $request->input('expiration_at');
+        $task->priority = $request->input('priority');
+        $task->category = $request->input('category');
+        $task->user_id = auth()->id(); // Assuming you have user authentication
+        $task->save();
+
+        return redirect()->route('welcome')->with('success', 'Tarea creada exitosamente');
     }
 
     /**
-     * Display the specified resource.
+     * Display the Auth user's tasks.
      */
-    public function show(string $id)
-    {
-        //
+    public function show(){
+        $tasks = Tasks::where('user_id', auth()->id())->get();
+        return view('welcome', ['tasks' => $tasks]);
+
     }
 
     /**

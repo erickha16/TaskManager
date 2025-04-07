@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class UsersController extends Controller
 {
@@ -24,7 +26,23 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:8',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+        // If validation passes, you can proceed to save the data.
+        $user = new User();
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->password = Hash::make($request->input('password'));
+        $user->save();
+        return redirect()->route('welcome')->with('success', 'Usuario creado exitosamente');
     }
 
     /**
@@ -57,13 +75,13 @@ class UsersController extends Controller
     }
 
 
-
+/* 
     public function login(Request $request){
         try {
             // Validación mejorada
             $validated = $request->validate([
                 'email' => 'required|email',
-                'password' => 'required|string|min:6',
+                'password' => 'required|string|min:8',
             ]);
 
             // Buscar usuario directamente (más eficiente)
@@ -100,6 +118,24 @@ class UsersController extends Controller
             ], 500);
         }
     }
+ */
+
+    public function login(Request $request){
+        // Validate the incoming request
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:8',
+        ]);
+
+        // Attempt to log the user in
+        if (Auth::attempt($validated)) {
+            // If login is successful, redirect to the root route
+            return redirect()->route('welcome');
+        }
+
+        // If login fails, redirect back with an error
+        return back()->withErrors(['email' => 'The provided credentials are incorrect.']);
+    }
 
 
 
@@ -110,30 +146,15 @@ class UsersController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout(Request $request){
-        try {
-            // Revoca el token de acceso actual
-            $request->user()->currentAccessToken()->delete();
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'Sesión cerrada exitosamente'
-            ]);
-            
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al cerrar sesión',
-                'error' => env('APP_DEBUG') ? $e->getMessage() : null
-            ], 500);
-        }
-        /* 
-            Requisitos para usar el método:
-            El cliente debe incluir el token en los headers:
-            Authorization: Bearer {token}
-            Ejemplo de uso: 
-            Headers: 
-            Authorization Bearer 1|2HABnrDFV4cdCHyAnP4oasFgxBDa5eQpg81jC9bl811965bf
-        */
+        // Log the user out
+        Auth::logout();
+
+        // Clear the session data
+        session()->invalidate();
+        session()->regenerateToken();
+
+        // Redirect the user to the root or home page
+        return redirect()->route('login');
     }
 
 
