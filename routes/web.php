@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\TasksController;
+use \App\Models\Tasks;
 
 
 //Rutas de autenticación
@@ -27,13 +28,21 @@ Route::get('/create-task', function () {
     return view('newTask');
 })->name('newTask')->middleware('auth');
 
-Route::get('/update-task', function () {
-    return view('updateTask');
+Route::get('/update-task/{id}', function ($id) {
+    $task = Tasks::find($id);
+    if (!$task) {
+        return redirect()->back()
+            ->withErrors(['task' => 'Tarea no encontrada'])
+            ->withInput();   
+    }
+
+    return view('updateTask', ['task' => $task]);
 })->name('updateTask')->middleware('auth');
 
 
 //POST
 Route::post('/create-task', [TasksController::class, 'store'])->name('newTask.post')->middleware('auth');
+Route::post('/update-task/{id}', [TasksController::class, 'update'])->name('updateTask.post')->middleware('auth');
 
 
 

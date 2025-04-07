@@ -62,11 +62,12 @@ class TasksController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
-    {
-        $task = Tasks::find($request->input('id'));
+    public function update(Request $request, int $id){
+        $task = Tasks::find($id);
         if (!$task) {
-            return response()->json(['message' => 'Task not found'], 404);
+            return redirect()->back()
+                ->withErrors(['task' => 'Tarea no encontrada'])
+                ->withInput();
         }
 
         $validator = \Validator::make($request->all(), [
@@ -91,8 +92,20 @@ class TasksController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
+    public function destroy(Request $request){
+        $task = Tasks::find($request->input('id'));
+        if (!$task) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tarea no encontrada',
+            ]);
+        }
+        $task->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tarea eliminada exitosamente',
+        ]);
     }
+    
 }

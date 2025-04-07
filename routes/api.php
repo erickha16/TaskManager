@@ -16,4 +16,4 @@ Route::post('/users/login', [UsersController::class, 'login']); // Autenticar
 Route::post('/users/logout', [UsersController::class, 'logout'])->middleware('auth:sanctum');
 
 // Resource para tareas
-Route::apiResource('tasks', TasksController::class);
+Route::delete('/delete-task', [TasksController::class, 'destroy']);
