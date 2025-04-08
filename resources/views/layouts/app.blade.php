@@ -48,7 +48,23 @@
             </p>
         </div>
     </footer>
-    @yield('scripts')
 
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed bottom-4 right-4 z-50">
+        <div class="flex items-center p-4 w-full max-w-xs text-white bg-green-600 rounded-lg shadow-lg">
+            <div class="inline-flex flex-shrink-0 justify-center items-center w-8 h-8">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <div class="ml-3 text-sm font-normal" id="toast-message">Task deleted successfully</div>
+            <button type="button" class="ml-auto -mx-1.5 -my-1.5 text-white hover:text-gray-100 rounded-lg p-1.5 inline-flex h-8 w-8" onclick="hideToast()">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+    @yield('scripts')
 </body>
 </html>

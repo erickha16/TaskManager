@@ -101,50 +101,124 @@
         @endif
     </div>
 </div>
+
+
+<!-- Modal de Confirmación -->
+<div id="modalBackdrop" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-auto overflow-hidden">
+        <!-- Contenido del Modal -->
+        <div class="p-6">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                    <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-medium text-gray-900">Delete Task</h3>
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500">Are you sure you want to delete this task? This action cannot be undone.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Botones de acción -->
+        <div class="bg-gray-50 px-4 py-3 flex flex-row-reverse">
+            <button type="button" id="confirmDeleteBtn" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                Delete
+            </button>
+            <button type="button" id="cancelDeleteBtn" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const deleteButtons = document.querySelectorAll('.btn-delete');
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
         
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                if (!confirm('Are you sure you want to delete this task?')) return;
-                
-                const taskId = this.getAttribute('data-id');
-                const options = {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ id: taskId })
-                }
+        let currentTaskId = null;
+        let currentButton = null;
 
-                fetch('/api/delete-task', options)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Network response was not ok');
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            // Find the closest row and remove it
-                            const row = button.closest('tr');
-                            row.classList.add('opacity-0', 'transition-opacity', 'duration-300');
-                            setTimeout(() => row.remove(), 300);
-                            
-                            // Show success message
-                            alert('Task deleted successfully');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Error deleting task');
-                    });
+        // Abrir modal al hacer clic en Delete
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentTaskId = this.getAttribute('data-id');
+                currentButton = this;
+                modalBackdrop.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Previene el scroll
             });
         });
+
+        // Confirmar eliminación
+        confirmDeleteBtn.addEventListener('click', function() {
+            if (!currentTaskId) return;
+            
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ id: currentTaskId })
+            };
+
+            fetch('/api/delete-task', options)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Animación para eliminar la fila
+                        const row = currentButton.closest('tr');
+                        row.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                        setTimeout(() => row.remove(), 300);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    closeModal();
+                });
+        });
+
+        // Cancelar eliminación
+        cancelDeleteBtn.addEventListener('click', closeModal);
+
+        // Cerrar al hacer clic fuera del modal
+        modalBackdrop.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Función para cerrar el modal
+        function closeModal() {
+            modalBackdrop.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            currentTaskId = null;
+            currentButton = null;
+        }
+
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !modalBackdrop.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
     });
+
+    
 </script>
 @endsection
