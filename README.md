@@ -53,65 +53,80 @@ Desarrollar esta aplicación fue un **reto técnico y de aprendizaje**. Al princ
 
 1. **Clonar el Repositorio**
 
-```bash
-git clone https://github.com/erickha16/TaskManager
-cd TaskManager
-```
+    ```bash
+    git clone https://github.com/erickha16/TaskManager
+    cd TaskManager
+    ```
 
 2. **Instalar Dependencias de PHP (Composer)**
 
-```bash
-composer install
-```
+    ```bash
+    composer install
+    ```
 
 3. **Configurar el Entorno(Archivo .env)**
 
-- Copia el archivo .env.example y renómbralo a .env:
+    - Copia el archivo .env.example y renómbralo a .env:
 
-```bash
-cp .env.example .env
-```
+    ```bash
+    cp .env.example .env
+    ```
 
-- Edita el archivo .env con tus credenciales de MySQL (asegúrate de que coincidan con tu XAMPP):
+    - Edita el archivo .env con tus credenciales de MySQL (asegúrate de que coincidan con tu XAMPP):
 
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=nombre_de_tu_base_de_datos
-DB_USERNAME=root  # Usuario por defecto de XAMPP
-DB_PASSWORD=      # Contraseña de XAMPP (normalmente vacía)
-```
+    ```env
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=nombre_de_tu_base_de_datos
+    DB_USERNAME=root  # Usuario por defecto de XAMPP
+    DB_PASSWORD=      # Contraseña de XAMPP (normalmente vacía)
+    ```
 
 4. **Generar la Clave de la Aplicación**
 
-```bash
-php artisan key:generate
-```
+    ```bash
+    php artisan key:generate
+    ```
+
+    - El paso de generar la clave de la aplicación es fundamental en Laravel y sirve para lo siguiente:
+    1. Cifrado de datos sensibles:
+            - Laravel usa esta clave para encriptar cookies, sesiones, tokens CSRF y otros datos sensibles.
+            - Sin ella, la seguridad de tu aplicación se compromete (ej: usuarios podrían manipular cookies).
+    2. Funcionamiento correcto de características clave:
+            - La autenticación (login, registros) depende de esta clave.
+            - Si no está configurada, verás errores como:
+
+        ```plaintext
+            No application encryption key has been specified.
+        ```
+
+    3. Garantiza unicidad:
+            - Cada proyecto Laravel debe tener una clave única y aleatoria (nunca reutilices una de otro proyecto).
 
 5. **Crear la Base de Datos**
 
-- Abre phpMyAdmin (desde XAMPP) o usa MySQL Workbench.
-- Si usas XAMPP, debes asegurarte desde el panel de control que los sercisios de Apache y MySql estén corriendo correctamente y posteriomente, en el navegador, dirigirte a la ruta http://localhost/phpmyadmin/
-- Crea una base de datos con el nombre que especificaste en .env (ej: nombre_de_tu_base_de_datos).
+    - Abre phpMyAdmin (desde XAMPP) o usa MySQL Workbench.
+    - Si usas XAMPP, debes asegurarte desde el panel de control que los sercisios de Apache y MySql estén corriendo correctamente y posteriomente, en el navegador, dirigirte a la ruta http://localhost/phpmyadmin/
+    - Crea una base de datos con el nombre que especificaste en .env (ej: nombre_de_tu_base_de_datos).
 
 6. **Ejecutar migraciones y Seeders**
 
-- Las migraciones crean la estructura de las tablas a a tu base de datos. 
-- Los seeders son para que tu tablas ya se creen con datos y puedas probar el sistema.
+    - Las migraciones crean la estructura de las tablas a a tu base de datos. 
+    - Los seeders son para que tu tablas ya se creen con datos y puedas probar el sistema.
 
-```bash
-php artisan migrate
-php artisan db:seed
-```
+    ```bash
+    php artisan migrate
+    php artisan db:seed
+    ```
 
 7. **Iniciar el Servidor**
 
-```bash
-php artisan serve
-```
+    ```bash
+    php artisan serve
+    ```
 
-- El proyecto estará disponible en: http://localhost:8000.
+    - El proyecto estará disponible en: http://localhost:8000.
 
 ### Notas importantes
 
