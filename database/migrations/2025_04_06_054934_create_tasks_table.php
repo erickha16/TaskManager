@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->string('title', 60);
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('state', 20)->default('pendiente');
             $table->date('expiration_at')->nullable();
             $table->boolean('priority')->default(false);

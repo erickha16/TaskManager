@@ -20,17 +20,17 @@ class TasksController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-
+    {        
+        //Validar los datos
         $validator = \Validator::make($request->all(), [
             'title' => 'required|string|max:60',
-            'description' => 'required|string|max:1000',
+            'description' => 'nullable|string|max:1000',
             'state' => 'required|string|max:15',
-            'expiration_at' => 'date',
+            'expiration_at' => 'nullable|date',
             'priority' => 'required|boolean',
             'category' => 'required|string|max:15',
         ]);
-        // Validate the request data
+        // Si falla, redirigir de nuevo con los errores
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
@@ -44,7 +44,7 @@ class TasksController extends Controller
         $task->expiration_at = $request->input('expiration_at');
         $task->priority = $request->input('priority');
         $task->category = $request->input('category');
-        $task->user_id = auth()->id(); // Assuming you have user authentication
+        $task->user_id = auth()->id(); // Asiganmos el id del usuario autenticado
         $task->save();
 
         return redirect()->route('welcome')->with('success', 'Tarea creada exitosamente');

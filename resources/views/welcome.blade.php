@@ -104,11 +104,11 @@
 
 
 <!-- Modal de Confirmación -->
-<div id="modalBackdrop" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-    <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-auto overflow-hidden">
-        <!-- Contenido del Modal -->
-        <div class="p-6">
-            <div class="flex items-start">
+<div id="modalBackdrop" class="hidden fixed inset-0 z-50 items-center justify-center  p-4 backdrop-blur-sm">
+    <!-- Contenido del Modal -->
+    <div class="relative  mt-64 bg-white rounded-lg shadow-xl max-w-md w-full mx-auto overflow-hidden">
+        <div class="p-6 ">
+            <div class="flex items-start ">
                 <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
                     <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -138,6 +138,32 @@
 
 @section('scripts')
 <script>
+
+    // Función para mostrar el toast
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        
+        // Configura el mensaje y el color según el tipo
+        toastMessage.textContent = message;
+        toast.className = `fixed bottom-4 right-4 z-50 flex items-center p-4 w-full max-w-xs rounded-lg shadow-lg toast-transition toast-show ${type === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white`;
+        
+        // Oculta automáticamente después de 3 segundos
+        setTimeout(() => {
+            hideToast();
+        }, 3000);
+    }
+
+    // Función para ocultar el toast
+    function hideToast() {
+        const toast = document.getElementById('toast');
+        toast.classList.add('toast-hide');
+        setTimeout(() => {
+            toast.classList.add('hidden');
+            toast.classList.remove('toast-show', 'toast-hide');
+        }, 300);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const deleteButtons = document.querySelectorAll('.btn-delete');
         const modalBackdrop = document.getElementById('modalBackdrop');
@@ -183,6 +209,9 @@
                         const row = currentButton.closest('tr');
                         row.classList.add('opacity-0', 'transition-opacity', 'duration-300');
                         setTimeout(() => row.remove(), 300);
+
+                        // MOSTRAR TOAST DE ÉXITO - ESTA ES LA LÍNEA QUE FALTABA
+                        showToast('Task deleted successfully', 'success');
                     }
                 })
                 .catch(error => {
@@ -221,4 +250,24 @@
 
     
 </script>
+
+<style>
+    .toast-transition {
+        transition: all 0.3s ease-in-out;
+    }
+    .toast-show {
+        animation: toast-in 0.3s ease-out;
+    }
+    .toast-hide {
+        animation: toast-out 0.3s ease-in;
+    }
+    @keyframes toast-in {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes toast-out {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+</style>
 @endsection
