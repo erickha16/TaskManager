@@ -8,16 +8,17 @@ use Illuminate\Http\Request;
 class TasksController extends Controller
 {
     /**
-     * Display a listing of the resource. 
+     * Despliega la vista Tasks y proporciona la lista de tareas.
      */
     public function index() 
     {
+        //Realizar la consulta a la base de datos
         $tasks = Tasks::all();
         return view('welcome', ['tasks' => $tasks]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Crea una nueva tarea.
      */
     public function store(Request $request)
     {        
@@ -36,7 +37,7 @@ class TasksController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-
+        // Crear la tarea
         $task = new Tasks();
         $task->title = $request->input('title');
         $task->description = $request->input('description');
@@ -47,6 +48,7 @@ class TasksController extends Controller
         $task->user_id = auth()->id(); // Asiganmos el id del usuario autenticado
         $task->save();
 
+        // Redirigir a la vista de tareas con un mensaje de éxito
         return redirect()->route('welcome')->with('success', 'Tarea creada exitosamente');
     }
 
@@ -60,48 +62,55 @@ class TasksController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Edita una tarea existente.
      */
     public function update(Request $request, int $id){
+        //Busca la tarea por id
         $task = Tasks::find($id);
+        // Si no existe, redirigir de nuevo con un error
         if (!$task) {
             return redirect()->back()
                 ->withErrors(['task' => 'Tarea no encontrada'])
                 ->withInput();
         }
-
+        // Validar los datos
         $validator = \Validator::make($request->all(), [
             'title' => 'required|string|max:60',
-            'description' => 'required|string|max:1000',
+            'description' => 'nullable|string|max:1000',
             'state' => 'required|string|max:15',
-            'expiration_at' => 'date',
+            'expiration_at' => 'nullable|date',
             'priority' => 'required|boolean',
             'category' => 'required|string|max:15',
         ]);
-        // Validate the request data
+        // Si falla, redirigir de nuevo con los errores
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
         }
-
+        // Actualizar la tarea
         $task->update($request->all());
+        // Redirigir a la vista de tareas con un mensaje de éxito
         return redirect()->route('welcome')->with('success', 'Tarea actualizada exitosamente');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina una tarea existente.
      */
     public function destroy(Request $request){
+        // Validar el id de la tarea
         $task = Tasks::find($request->input('id'));
+        // Si no existe, retorna un json con un error 
         if (!$task) {
             return response()->json([
                 'success' => false,
                 'message' => 'Tarea no encontrada',
             ]);
         }
+        //Eliminar la tarea
         $task->delete();
 
+        //Retornar una respuesta JSON
         return response()->json([
             'success' => true,
             'message' => 'Tarea eliminada exitosamente',

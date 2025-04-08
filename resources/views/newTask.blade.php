@@ -97,7 +97,11 @@
                 @endif
 
                 <!-- Submit Button -->
-                <div class="flex justify-end">
+                <div class="flex justify-end space-x-3">
+                <a href="{{ route('welcome') }}" 
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Cancel
+                    </a>
                     <button type="submit"
                         class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Create Task
@@ -107,4 +111,42 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+     // Función para mostrar el toast
+     function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        
+        // Configura el mensaje y el color según el tipo
+        toastMessage.textContent = message;
+        toast.className = `fixed bottom-4 right-4 z-50 flex items-center p-4 w-full max-w-xs rounded-lg shadow-lg toast-transition toast-show ${type === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white`;
+        
+        // Oculta automáticamente después de 3 segundos
+        setTimeout(() => {
+            hideToast();
+        }, 3000);
+    }
+
+    // Función para ocultar el toast
+    function hideToast() {
+        const toast = document.getElementById('toast');
+        toast.classList.add('toast-hide');
+        setTimeout(() => {
+            toast.classList.add('hidden');
+            toast.classList.remove('toast-show', 'toast-hide');
+        }, 300);
+    }
+
+    // Mostrar mensaje de éxito al cargar la página si existe en la sesión
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar si hay mensaje de éxito en la sesión
+        const successMessage = '{{ session('success') }}';
+        if (successMessage && successMessage !== '') {
+            showToast(successMessage, 'success');
+        }
+    });
+</script>
 @endsection

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Validator;
 class UsersController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Se muestra una lista de los usuarios (Usado en la API).
      */
     public function index()
     {
@@ -22,31 +22,34 @@ class UsersController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Crea un nuevo usuario.
      */
     public function store(Request $request)
     {
+        // Validar los datos de entrada
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
         ]);
+        // Si la validación falla, redirigir de nuevo con los errores
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
         }
-        // If validation passes, you can proceed to save the data.
+        // Si la validación es exitosa, crear el usuario
         $user = new User();
         $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->password = Hash::make($request->input('password'));
         $user->save();
+        //Redirigir al usuario a la página de inicio de sesión con un mensaje de éxito
         return redirect()->route('welcome')->with('success', 'Usuario creado exitosamente');
     }
 
     /**
-     * Display the specified resource.
+     * Muestra un usuario específico (Usado en la API).
      */
     public function show(string $id)
     {
@@ -120,40 +123,39 @@ class UsersController extends Controller
     }
  */
 
+    // Función para autenticar al usuario
+    // Esta función se encarga de autenticar al usuario utilizando el email y la contraseña proporcionados.
     public function login(Request $request){
-        // Validate the incoming request
+        // Validar los datos de entrada
+        // Se asegura de que el email y la contraseña sean requeridos y cumplan con los criterios especificados.
         $validated = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string|min:8',
         ]);
 
-        // Attempt to log the user in
+        // Intentar autenticar al usuario utilizando las credenciales proporcionadas
         if (Auth::attempt($validated)) {
-            // If login is successful, redirect to the root route
+            // Si la autenticación es exitosa, regenerar el token de sesión
             return redirect()->route('welcome');
         }
 
-        // If login fails, redirect back with an error
+        // Si la autenticación falla, redirigir de nuevo con un mensaje de error
         return back()->withErrors(['email' => 'The provided credentials are incorrect.']);
     }
 
 
 
-    /**
-     * Cierra la sesión del usuario (revoca el token actual)
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
+    
+     // Cierra la sesión del usuario (revoca el token actual)
     public function logout(Request $request){
-        // Log the user out
+        // Revocar el token actual
         Auth::logout();
 
-        // Clear the session data
+        // Eliminar la sesión del usuario
         session()->invalidate();
         session()->regenerateToken();
 
-        // Redirect the user to the root or home page
+        // Redirigir al usuario a la página de inicio de sesión
         return redirect()->route('login');
     }
 

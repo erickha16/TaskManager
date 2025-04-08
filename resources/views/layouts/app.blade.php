@@ -49,22 +49,56 @@
         </div>
     </footer>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="hidden fixed bottom-4 right-4 z-50">
-        <div class="flex items-center p-4 w-full max-w-xs text-white bg-green-600 rounded-lg shadow-lg">
-            <div class="inline-flex flex-shrink-0 justify-center items-center w-8 h-8">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-            </div>
-            <div class="ml-3 text-sm font-normal" id="toast-message">Task deleted successfully</div>
-            <button type="button" class="ml-auto -mx-1.5 -my-1.5 text-white hover:text-gray-100 rounded-lg p-1.5 inline-flex h-8 w-8" onclick="hideToast()">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
+    <!-- Toast de notificación -->
+<div id="toast" class="hidden fixed bottom-4 right-4 z-50">
+    <div class="flex items-center p-4 w-full max-w-xs text-white rounded-lg shadow-lg" id="toast-content">
+        <div class="inline-flex flex-shrink-0 justify-center items-center w-8 h-8">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="toast-icon">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
         </div>
+        <div class="ml-3 text-sm font-normal" id="toast-message"></div>
+        <button type="button" class="ml-auto -mx-1.5 -my-1.5 text-white hover:text-gray-100 rounded-lg p-1.5 inline-flex h-8 w-8" onclick="hideToast()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
     </div>
+</div>
     @yield('scripts')
+    <script>
+        // Funciones globales para manejar el toast
+    window.showToast = function(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastContent = document.getElementById('toast-content');
+        const toastIcon = document.getElementById('toast-icon');
+        const toastMessage = document.getElementById('toast-message');
+        
+        // Configura el mensaje y el color según el tipo
+        toastMessage.textContent = message;
+        toastContent.className = `flex items-center p-4 w-full max-w-xs text-white rounded-lg shadow-lg toast-transition toast-show ${
+            type === 'success' ? 'bg-green-600' : 'bg-red-600'
+        }`;
+        
+        // Cambia el icono según el tipo
+        if (type === 'success') {
+            toastIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
+        } else {
+            toastIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>';
+        }
+        
+        toast.classList.remove('hidden');
+        
+        // Oculta automáticamente después de 3 segundos
+        setTimeout(() => {
+            hideToast();
+        }, 3000);
+    };
+
+    window.hideToast = function() {
+        const toast = document.getElementById('toast');
+        toast.classList.add('hidden');
+    };
+    </script>
 </body>
 </html>

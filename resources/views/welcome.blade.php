@@ -139,6 +139,7 @@
 @section('scripts')
 <script>
 
+    // ------------------------------- Funciones del Toast ------------------------------- //
     // Función para mostrar el toast
     function showToast(message, type = 'success') {
         const toast = document.getElementById('toast');
@@ -164,6 +165,16 @@
         }, 300);
     }
 
+    // Mostrar mensaje de éxito al cargar la página si existe en la sesión
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar si hay mensaje de éxito en la sesión
+        const successMessage = '{{ session('success') }}';
+        if (successMessage && successMessage !== '') {
+            showToast(successMessage, 'success');
+        }
+        
+    });
+    // ------------------------------- Funciones del Modal ------------------------------- //
     document.addEventListener('DOMContentLoaded', function() {
         const deleteButtons = document.querySelectorAll('.btn-delete');
         const modalBackdrop = document.getElementById('modalBackdrop');
@@ -184,10 +195,9 @@
             });
         });
 
-        // Confirmar eliminación
+        // Confirmar eliminación, lo haremos como si estuvieamos consumiendo una API
         confirmDeleteBtn.addEventListener('click', function() {
             if (!currentTaskId) return;
-            
             const options = {
                 method: 'DELETE',
                 headers: {
