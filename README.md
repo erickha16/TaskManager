@@ -92,6 +92,7 @@ php artisan key:generate
 5. **Crear la Base de Datos**
 
 - Abre phpMyAdmin (desde XAMPP) o usa MySQL Workbench.
+- Si usas XAMPP, debes asegurarte desde el panel de control que los sercisios de Apache y MySql estén corriendo correctamente y posteriomente, en el navegador, dirigirte a la ruta http://localhost/phpmyadmin/
 - Crea una base de datos con el nombre que especificaste en .env (ej: nombre_de_tu_base_de_datos).
 
 6. **Ejecutar migraciones y Seeders**

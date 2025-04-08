@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\Task;
+use App\Models\Tasks;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder {
         ]);
 
         //Agregamos 3 tareas d eprueba
-        Task::create([
+        Tasks::create([
             'title' => 'Tarea de ejemplo',
             'description' => 'Descripción de la tarea',
             'state' => 'pending',
@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder {
             'category' => 'trabajo',
             'user_id' => 1, // Relación con el usuario ID 1
         ]);
-        Task::create([
+        Tasks::create([
             'title' => 'Tarea de ejemplo',
             'description' => null,
             'state' => 'pending',
@@ -58,7 +58,7 @@ class DatabaseSeeder extends Seeder {
             'category' => 'trabajo',
             'user_id' => 1, // Relación con el usuario ID 1
         ]);
-        Task::create([
+        Tasks::create([
             'title' => 'Tarea de usuario2',
             'description' => 'Descripción de la tarea',
             'state' => 'pending',
