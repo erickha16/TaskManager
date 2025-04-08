@@ -45,7 +45,7 @@ class UsersController extends Controller
         $user->password = Hash::make($request->input('password'));
         $user->save();
         //Redirigir al usuario a la página de inicio de sesión con un mensaje de éxito
-        return redirect()->route('welcome')->with('success', 'Usuario creado exitosamente');
+        return redirect()->route('welcome')->with('success', 'User created successfully! Please login.');
     }
 
     /**

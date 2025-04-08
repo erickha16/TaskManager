@@ -81,3 +81,16 @@
         </div>
     </div>
 @endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        
+        form.addEventListener('submit', function() {
+            // Guardar mensaje antes de enviar el formulario
+            localStorage.setItem('toastMessage', '¡Registro exitoso! Por favor inicia sesión');
+        });
+    });
+</script>
+@endsection

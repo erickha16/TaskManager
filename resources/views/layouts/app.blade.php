@@ -99,6 +99,15 @@
         const toast = document.getElementById('toast');
         toast.classList.add('hidden');
     };
+    
+    // Verificar si hay mensaje en localStorage al cargar cualquier página
+    document.addEventListener('DOMContentLoaded', function() {
+        const toastMessage = localStorage.getItem('toastMessage');
+        if(toastMessage) {
+            showToast(toastMessage, 'success');
+            localStorage.removeItem('toastMessage');
+        }
+    });
     </script>
 </body>
 </html>

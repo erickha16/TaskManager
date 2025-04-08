@@ -49,7 +49,7 @@ class TasksController extends Controller
         $task->save();
 
         // Redirigir a la vista de tareas con un mensaje de éxito
-        return redirect()->route('welcome')->with('success', 'Tarea creada exitosamente');
+        return redirect()->route('welcome')->with('success', 'Task created successfully');
     }
 
     /**
@@ -70,7 +70,7 @@ class TasksController extends Controller
         // Si no existe, redirigir de nuevo con un error
         if (!$task) {
             return redirect()->back()
-                ->withErrors(['task' => 'Tarea no encontrada'])
+                ->withErrors(['task' => 'Task not found'])
                 ->withInput();
         }
         // Validar los datos
@@ -91,7 +91,7 @@ class TasksController extends Controller
         // Actualizar la tarea
         $task->update($request->all());
         // Redirigir a la vista de tareas con un mensaje de éxito
-        return redirect()->route('welcome')->with('success', 'Tarea actualizada exitosamente');
+        return redirect()->route('welcome')->with('success', 'Task updated successfully');
     }
 
     /**
@@ -104,7 +104,7 @@ class TasksController extends Controller
         if (!$task) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tarea no encontrada',
+                'message' => 'Task not found',
             ]);
         }
         //Eliminar la tarea
@@ -113,7 +113,7 @@ class TasksController extends Controller
         //Retornar una respuesta JSON
         return response()->json([
             'success' => true,
-            'message' => 'Tarea eliminada exitosamente',
+            'message' => 'Task deleted successfully',
         ]);
     }
     
