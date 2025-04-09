@@ -139,7 +139,8 @@ chmod -R 775 storage bootstrap/cache
 
 ## Créditos y contacto 
 
-Proyecto desarrollado por: Erick Adrián Hernández Aburto
+Proyecto desarrollado por: Erick Adrián Hernández Aburto.
+
  ¿Interesado en colaborar o reportar un bug? Contáctame en:  
 - [LindekIn](https://www.linkedin.com/in/erickha16/)
 - [Github](https://github.com/erickha16)
